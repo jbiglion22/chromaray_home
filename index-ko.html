@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>크로마 레이 – 빛 섞기 퍼즐</title>
+<meta name="description" content="거울로 빛을 꺾고 빨강, 초록, 파랑을 섞어 크리스털을 밝히는 안드로이드 퍼즐 게임. 120개 스테이지.">
+<meta name="theme-color" content="#1B1547">
+<link rel="alternate" hreflang="en" href="index.html">
+<link rel="alternate" hreflang="ko" href="index-ko.html">
+<link rel="alternate" hreflang="x-default" href="index.html">
+<link rel="icon" href="icons/app-icon.png">
+<script>
+(function () {
+  var page = { en: 'index.html', ko: 'index-ko.html' };
+  var current = document.documentElement.lang;
+  var asked = new URLSearchParams(location.search).get('lang');
+  var saved = null;
+  try { saved = localStorage.getItem('homeLang'); } catch (e) {}
+  if (page[asked]) { try { localStorage.setItem('homeLang', asked); } catch (e) {} }
+  var target = page[asked] ? asked : page[saved] ? saved : null;
+  if (!target && current === 'en') {
+    var langs = navigator.languages || [navigator.language];
+    for (var i = 0; i < langs.length; i++) {
+      var code = String(langs[i]).toLowerCase().split('-')[0];
+      if (page[code]) { target = code; break; }
+    }
+  }
+  if (target && target !== current) location.replace(page[target] + '?lang=' + target + location.hash);
+})();
+</script>
+<style>
+:root{--top:#1B1547;--bg:#07071A;--card:#14163A;--inner:#0E1030;--line:#2F3266;--ink:#F5F6FF;--sub:#A9ACD6;
+--yellow:#FFD24A;--y1:#FFE27A;--y2:#FFB938;--ytext:#3A2805;--purple:#6C5CF0;
+--r:#FF4D6D;--g:#3DDC97;--b:#5B8CFF;}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;background:var(--bg)}
+body{margin:0;background:linear-gradient(var(--top),var(--bg) 760px);color:var(--ink);line-height:1.65;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;word-break:keep-all;overflow-wrap:break-word}
+img{display:block;max-width:100%;height:auto}
+a{color:var(--y1)}
+h1,h2,h3,p{margin:0}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+.skip{position:absolute;left:-999px}.skip:focus{left:12px;top:12px;z-index:20;background:var(--ink);color:var(--bg);padding:8px 12px;border-radius:8px}
+.nav{position:sticky;top:0;z-index:10;background:rgba(14,12,44,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;gap:12px;min-height:60px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;color:var(--ink);text-decoration:none}
+.brand img{border-radius:9px}
+.nav ul{display:flex;gap:4px;list-style:none;margin:0 0 0 auto;padding:0}
+.nav ul a{display:block;padding:8px 12px;border-radius:10px;color:var(--sub);text-decoration:none;font-size:15px}
+.nav ul a:hover{color:var(--ink);background:var(--card)}
+.lang{display:flex;gap:4px;padding:3px;border:1px solid var(--line);border-radius:999px;flex:none}
+.lang a{padding:4px 11px;min-height:30px;border-radius:999px;color:var(--sub);text-decoration:none;font-size:14px}
+.lang a[aria-current]{background:var(--purple);color:#fff;font-weight:700}
+.hero .wrap{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:center;padding-top:64px;padding-bottom:72px}
+.kicker{color:var(--yellow);font-weight:700;font-size:15px;letter-spacing:.04em}
+h1{font-size:clamp(38px,6.2vw,66px);line-height:1.12;font-weight:900;letter-spacing:-.02em;margin-top:10px}
+.lead{font-size:clamp(17px,2vw,20px);color:var(--sub);margin-top:18px;max-width:34em}
+.facts{display:flex;flex-wrap:wrap;gap:8px;margin:24px 0 0;padding:0;list-style:none}
+.facts li{padding:6px 14px;border:1px solid var(--line);background:var(--card);border-radius:999px;font-size:14px}
+.soon{display:inline-block;margin-top:28px;padding:14px 26px;border-radius:16px;font-weight:800;color:var(--ytext);background:linear-gradient(var(--y1),var(--y2));box-shadow:0 5px 0 #C97F14}
+.shot{border-radius:26px;border:6px solid #23255a;box-shadow:0 24px 60px rgba(0,0,0,.5)}
+.hero .shot{max-width:320px;margin:0 auto}
+section{padding:72px 0;border-top:1px solid rgba(47,50,102,.5)}
+h2{font-size:clamp(27px,4vw,38px);line-height:1.25;font-weight:800;letter-spacing:-.01em}
+.sub{color:var(--sub);margin-top:10px;font-size:17px;max-width:40em}
+.mix{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center;margin-top:32px;background:var(--card);border:1px solid var(--line);border-radius:24px;padding:32px}
+.switches{display:flex;gap:12px;flex-wrap:wrap}
+.switches button{min-width:92px;min-height:52px;border-radius:14px;border:2px solid var(--c);background:transparent;color:var(--ink);font:inherit;font-weight:700;cursor:pointer}
+.switches button[aria-pressed=true]{background:var(--c);color:#07071A}
+.switches button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.answer{margin-top:18px;font-size:19px;font-weight:700;min-height:1.65em}
+.note{margin-top:6px;color:var(--sub);font-size:15px}
+.stagebox{display:grid;place-items:center;min-height:230px;background:var(--inner);border-radius:18px}
+.crystal{width:96px;height:96px;transform:rotate(45deg);border-radius:10px;border:3px solid #5F6296;background:#17193F;transition:background .2s,box-shadow .2s,border-color .2s}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px}
+.card h3{font-size:18px}
+.card p{color:var(--sub);font-size:15px;margin-top:6px}
+.num{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--purple);font-weight:800;margin-bottom:12px}
+.pieces{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:32px}
+.gallery{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;margin-top:32px}
+.gallery figure{margin:0}
+.gallery .shot{border-radius:18px;border-width:4px}
+figcaption{color:var(--sub);font-size:14px;text-align:center;margin-top:10px}
+footer{border-top:1px solid var(--line);padding:32px 0 44px;color:var(--sub);font-size:14px}
+footer .wrap{display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between}
+@media (max-width:860px){.nav ul{display:none}.lang{margin-left:auto}
+.hero .wrap{grid-template-columns:1fr;gap:36px;padding-top:40px;padding-bottom:52px}
+.mix{grid-template-columns:1fr;padding:20px}.grid3,.pieces{grid-template-columns:repeat(2,minmax(0,1fr))}
+.gallery{grid-template-columns:repeat(4,68%);overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:10px}.gallery figure{scroll-snap-align:start}
+section{padding:52px 0}}
+@media (max-width:520px){.grid3,.pieces{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.crystal{transition:none}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="#main"><img src="icons/app-icon.png" alt="" width="34" height="34">크로마 레이</a>
+  <ul><li><a href="#how">게임 방법</a></li><li><a href="#devices">장치</a></li><li><a href="#screens">화면</a></li></ul>
+  <nav class="lang" aria-label="Language"><a href="index.html?lang=en" hreflang="en" lang="en">EN</a><a href="index-ko.html?lang=ko" hreflang="ko" lang="ko" aria-current="page">한국어</a></nav>
+</div></header>
+<main id="main">
+<div class="hero"><div class="wrap">
+  <div>
+    <p class="kicker">빛 섞기 퍼즐</p>
+    <h1>빛을 꺾고,<br>색을 섞으세요.</h1>
+    <p class="lead">거울을 놓아 빨강, 초록, 파랑 빛의 길을 바꾸고, 섞어서 새로운 색을 만들어 모든 크리스털을 정확한 색으로 밝혀 보세요.</p>
+    <ul class="facts"><li>120개 스테이지</li><li>새로운 장치 9종</li><li>한국어 · English</li><li>무료 (광고 포함)</li></ul>
+    <span class="soon">Google Play 출시 예정</span>
+  </div>
+  <img class="shot" src="images/play-mix-ko.webp" width="540" height="1200" alt="빨강, 초록, 파랑 빛이 판 위를 가로지르는 크로마 레이 스테이지">
+</div></div>
+<section><div class="wrap">
+  <h2>빛은 섞일수록 밝아져요</h2>
+  <p class="sub">물감과 반대로, 빛은 더할수록 밝아져요. 빛을 켜 보면서 크리스털에 어떤 색이 필요한지 확인해 보세요.</p>
+  <div class="mix">
+    <div>
+      <div class="switches">
+        <button type="button" data-bit="1" aria-pressed="true" style="--c:var(--r)">빨강</button>
+        <button type="button" data-bit="2" aria-pressed="true" style="--c:var(--g)">초록</button>
+        <button type="button" data-bit="4" aria-pressed="false" style="--c:var(--b)">파랑</button>
+      </div>
+      <p class="answer" id="answer" aria-live="polite"></p>
+      <p class="note">크리스털은 도착한 빛이 목표 색과 정확히 같을 때만 켜져요.</p>
+    </div>
+    <div class="stagebox"><div class="crystal" id="crystal"></div></div>
+  </div>
+</div></section>
+<section id="how"><div class="wrap"><h2>금방 익숙해지는 조작</h2><p class="sub">탭과 끌기면 충분해요. 나머지는 첫 스테이지들이 알려 줘요.</p><div class="grid3"><div class="card"><span class="num">1</span><h3>놓기</h3><p>빈 칸을 탭하면 보관함의 조각이 놓여요.</p></div><div class="card"><span class="num">2</span><h3>돌리고 옮기기</h3><p>조각을 탭하면 돌아가요. 끌면 옮겨지고, 판 밖으로 끌면 빠져요.</p></div><div class="card"><span class="num">3</span><h3>모든 크리스털 밝히기</h3><p>힌트 없이 적은 이동으로 깨면 별 세 개를 받아요.</p></div></div></div></section>
+<section id="devices"><div class="wrap"><h2>새로운 장치로 계속 새롭게</h2><p class="sub">장치는 하나씩 등장하고, 처음 만날 때 짧은 안내가 나와요.</p><div class="pieces"><div class="card"><h3>필터</h3><p>자기 색만 통과시켜요.</p></div><div class="card"><h3>스플리터</h3><p>빛을 직진과 옆 방향으로 나눠요.</p></div><div class="card"><h3>프리즘</h3><p>빨강은 왼쪽, 초록은 직진, 파랑은 오른쪽으로 나눠요.</p></div><div class="card"><h3>포털</h3><p>같은 번호의 포털에서 같은 방향으로 빛이 나와요.</p></div><div class="card"><h3>색 반전기</h3><p>빛을 반대 색으로 바꿔요. 빨강은 시안이 돼요.</p></div><div class="card"><h3>한 면 거울</h3><p>밝은 면은 반사하고, 점선 면은 막아요.</p></div><div class="card"><h3>결합기</h3><p>들어오는 빛을 합쳐 화살표 방향으로 내보내요.</p></div><div class="card"><h3>스위치 문</h3><p>같은 번호의 크리스털이 켜질 때까지 빛을 막아요.</p></div><div class="card"><h3>금지 크리스털</h3><p>어떤 빛도 닿으면 안 돼요. 빛을 다른 곳으로 보내요.</p></div></div></div></section>
+<section id="screens"><div class="wrap"><h2>게임 화면</h2><div class="gallery"><figure><img class="shot" src="images/play-mix-ko.webp" width="540" height="1200" alt="여러 빛이 지나가는 진행 중인 스테이지" loading="lazy"><figcaption>판을 가로지르는 빛</figcaption></figure><figure><img class="shot" src="images/play-yellow-ko.webp" width="540" height="1200" alt="노란 빛이 지나가는 진행 중인 스테이지" loading="lazy"><figcaption>노란 빛을 크리스털로 보내기</figcaption></figure><figure><img class="shot" src="images/stage-map-ko.webp" width="540" height="1200" alt="번호와 별이 표시된 스테이지 맵" loading="lazy"><figcaption>120개 스테이지</figcaption></figure><figure><img class="shot" src="images/how-to-ko.webp" width="540" height="1200" alt="색이 섞이는 모습을 보여 주는 게임 방법 화면" loading="lazy"><figcaption>빛 섞는 법 배우기</figcaption></figure></div></div></section>
+<section><div class="wrap"><h2>편하게 즐기도록</h2><div class="grid3"><div class="card"><h3>색약을 위한 옵션</h3><p>색 글자가 기본으로 켜져 있고, 고대비 빛으로 색 차이를 더 넓힐 수 있어요.</p></div><div class="card"><h3>막힐 때는 힌트</h3><p>힌트 3개로 시작해요. 다 쓰면 원할 때 동영상 광고를 보고 1개를 받을 수 있어요.</p></div><div class="card"><h3>광고 안내</h3><p>홈과 클리어 화면에 배너가 있고, 20번째 클리어부터 10번 클리어마다 전면 광고가 나와요. 플레이 화면에는 배너가 없어요. 인앱 결제는 없어요.</p></div></div></div></section>
+</main>
+<footer><div class="wrap">
+  <span>© 2026 J.Biglion · 개발자: J.Biglion</span>
+  <span><a href="privacy-policy-ko.html?lang=ko">개인정보처리방침</a> · 문의: <a href="mailto:jbiglion22@gmail.com">jbiglion22@gmail.com</a></span>
+</div></footer>
+<script>
+(function () {
+  var names = ["빛을 켜 보세요", "빨강", "초록", "노랑 (R+G)", "파랑", "마젠타 (R+B)", "시안 (G+B)", "흰색 (R+G+B)"];
+  var css = { 0: ['#17193F', '#5F6296'], 1: ['#FF4D6D'], 2: ['#3DDC97'], 4: ['#5B8CFF'], 3: ['#FFD93D'], 6: ['#4DE8F0'], 5: ['#F05BE0'], 7: ['#FFFFFF'] };
+  var buttons = document.querySelectorAll('.switches button');
+  var crystal = document.getElementById('crystal');
+  var answer = document.getElementById('answer');
+  function update() {
+    var mask = 0;
+    buttons.forEach(function (b) { if (b.getAttribute('aria-pressed') === 'true') mask |= +b.dataset.bit; });
+    var c = css[mask];
+    crystal.style.background = c[0];
+    crystal.style.borderColor = c[1] || '#fff';
+    crystal.style.boxShadow = mask ? '0 0 46px ' + c[0] : 'none';
+    answer.textContent = names[mask];
+  }
+  buttons.forEach(function (b) {
+    b.addEventListener('click', function () {
+      b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
+      update();
+    });
+  });
+  update();
+})();
+</script>
+</body>
+</html>

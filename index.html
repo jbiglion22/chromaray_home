@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chroma Ray – Light Mixing Puzzle</title>
+<meta name="description" content="A light-mixing mirror puzzle for Android. Bend beams with mirrors, blend red, green and blue, and light every crystal across 120 stages.">
+<meta name="theme-color" content="#1B1547">
+<link rel="alternate" hreflang="en" href="index.html">
+<link rel="alternate" hreflang="ko" href="index-ko.html">
+<link rel="alternate" hreflang="x-default" href="index.html">
+<link rel="icon" href="icons/app-icon.png">
+<script>
+(function () {
+  var page = { en: 'index.html', ko: 'index-ko.html' };
+  var current = document.documentElement.lang;
+  var asked = new URLSearchParams(location.search).get('lang');
+  var saved = null;
+  try { saved = localStorage.getItem('homeLang'); } catch (e) {}
+  if (page[asked]) { try { localStorage.setItem('homeLang', asked); } catch (e) {} }
+  var target = page[asked] ? asked : page[saved] ? saved : null;
+  if (!target && current === 'en') {
+    var langs = navigator.languages || [navigator.language];
+    for (var i = 0; i < langs.length; i++) {
+      var code = String(langs[i]).toLowerCase().split('-')[0];
+      if (page[code]) { target = code; break; }
+    }
+  }
+  if (target && target !== current) location.replace(page[target] + '?lang=' + target + location.hash);
+})();
+</script>
+<style>
+:root{--top:#1B1547;--bg:#07071A;--card:#14163A;--inner:#0E1030;--line:#2F3266;--ink:#F5F6FF;--sub:#A9ACD6;
+--yellow:#FFD24A;--y1:#FFE27A;--y2:#FFB938;--ytext:#3A2805;--purple:#6C5CF0;
+--r:#FF4D6D;--g:#3DDC97;--b:#5B8CFF;}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;background:var(--bg)}
+body{margin:0;background:linear-gradient(var(--top),var(--bg) 760px);color:var(--ink);line-height:1.65;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;word-break:keep-all;overflow-wrap:break-word}
+img{display:block;max-width:100%;height:auto}
+a{color:var(--y1)}
+h1,h2,h3,p{margin:0}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+.skip{position:absolute;left:-999px}.skip:focus{left:12px;top:12px;z-index:20;background:var(--ink);color:var(--bg);padding:8px 12px;border-radius:8px}
+.nav{position:sticky;top:0;z-index:10;background:rgba(14,12,44,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;gap:12px;min-height:60px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;color:var(--ink);text-decoration:none}
+.brand img{border-radius:9px}
+.nav ul{display:flex;gap:4px;list-style:none;margin:0 0 0 auto;padding:0}
+.nav ul a{display:block;padding:8px 12px;border-radius:10px;color:var(--sub);text-decoration:none;font-size:15px}
+.nav ul a:hover{color:var(--ink);background:var(--card)}
+.lang{display:flex;gap:4px;padding:3px;border:1px solid var(--line);border-radius:999px;flex:none}
+.lang a{padding:4px 11px;min-height:30px;border-radius:999px;color:var(--sub);text-decoration:none;font-size:14px}
+.lang a[aria-current]{background:var(--purple);color:#fff;font-weight:700}
+.hero .wrap{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:center;padding-top:64px;padding-bottom:72px}
+.kicker{color:var(--yellow);font-weight:700;font-size:15px;letter-spacing:.04em}
+h1{font-size:clamp(38px,6.2vw,66px);line-height:1.12;font-weight:900;letter-spacing:-.02em;margin-top:10px}
+.lead{font-size:clamp(17px,2vw,20px);color:var(--sub);margin-top:18px;max-width:34em}
+.facts{display:flex;flex-wrap:wrap;gap:8px;margin:24px 0 0;padding:0;list-style:none}
+.facts li{padding:6px 14px;border:1px solid var(--line);background:var(--card);border-radius:999px;font-size:14px}
+.soon{display:inline-block;margin-top:28px;padding:14px 26px;border-radius:16px;font-weight:800;color:var(--ytext);background:linear-gradient(var(--y1),var(--y2));box-shadow:0 5px 0 #C97F14}
+.shot{border-radius:26px;border:6px solid #23255a;box-shadow:0 24px 60px rgba(0,0,0,.5)}
+.hero .shot{max-width:320px;margin:0 auto}
+section{padding:72px 0;border-top:1px solid rgba(47,50,102,.5)}
+h2{font-size:clamp(27px,4vw,38px);line-height:1.25;font-weight:800;letter-spacing:-.01em}
+.sub{color:var(--sub);margin-top:10px;font-size:17px;max-width:40em}
+.mix{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center;margin-top:32px;background:var(--card);border:1px solid var(--line);border-radius:24px;padding:32px}
+.switches{display:flex;gap:12px;flex-wrap:wrap}
+.switches button{min-width:92px;min-height:52px;border-radius:14px;border:2px solid var(--c);background:transparent;color:var(--ink);font:inherit;font-weight:700;cursor:pointer}
+.switches button[aria-pressed=true]{background:var(--c);color:#07071A}
+.switches button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.answer{margin-top:18px;font-size:19px;font-weight:700;min-height:1.65em}
+.note{margin-top:6px;color:var(--sub);font-size:15px}
+.stagebox{display:grid;place-items:center;min-height:230px;background:var(--inner);border-radius:18px}
+.crystal{width:96px;height:96px;transform:rotate(45deg);border-radius:10px;border:3px solid #5F6296;background:#17193F;transition:background .2s,box-shadow .2s,border-color .2s}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px}
+.card h3{font-size:18px}
+.card p{color:var(--sub);font-size:15px;margin-top:6px}
+.num{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--purple);font-weight:800;margin-bottom:12px}
+.pieces{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:32px}
+.gallery{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;margin-top:32px}
+.gallery figure{margin:0}
+.gallery .shot{border-radius:18px;border-width:4px}
+figcaption{color:var(--sub);font-size:14px;text-align:center;margin-top:10px}
+footer{border-top:1px solid var(--line);padding:32px 0 44px;color:var(--sub);font-size:14px}
+footer .wrap{display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between}
+@media (max-width:860px){.nav ul{display:none}.lang{margin-left:auto}
+.hero .wrap{grid-template-columns:1fr;gap:36px;padding-top:40px;padding-bottom:52px}
+.mix{grid-template-columns:1fr;padding:20px}.grid3,.pieces{grid-template-columns:repeat(2,minmax(0,1fr))}
+.gallery{grid-template-columns:repeat(4,68%);overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:10px}.gallery figure{scroll-snap-align:start}
+section{padding:52px 0}}
+@media (max-width:520px){.grid3,.pieces{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.crystal{transition:none}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="#main"><img src="icons/app-icon.png" alt="" width="34" height="34">Chroma Ray</a>
+  <ul><li><a href="#how">How it works</a></li><li><a href="#devices">Devices</a></li><li><a href="#screens">Screens</a></li></ul>
+  <nav class="lang" aria-label="Language"><a href="index.html?lang=en" hreflang="en" lang="en" aria-current="page">EN</a><a href="index-ko.html?lang=ko" hreflang="ko" lang="ko">한국어</a></nav>
+</div></header>
+<main id="main">
+<div class="hero"><div class="wrap">
+  <div>
+    <p class="kicker">LIGHT MIXING PUZZLE</p>
+    <h1>Bend the light.<br>Mix the color.</h1>
+    <p class="lead">Place mirrors to steer red, green and blue beams, blend them into new colors, and light every crystal with exactly the right one.</p>
+    <ul class="facts"><li>120 stages</li><li>9 devices to discover</li><li>English · 한국어</li><li>Free with ads</li></ul>
+    <span class="soon">Coming soon to Google Play</span>
+  </div>
+  <img class="shot" src="images/play-mix-en.webp" width="540" height="1200" alt="A Chroma Ray stage with red, green and blue beams crossing the board">
+</div></div>
+<section><div class="wrap">
+  <h2>Light adds up</h2>
+  <p class="sub">Unlike paint, light gets brighter as it mixes. Turn the lights on and see what the crystal needs.</p>
+  <div class="mix">
+    <div>
+      <div class="switches">
+        <button type="button" data-bit="1" aria-pressed="true" style="--c:var(--r)">Red</button>
+        <button type="button" data-bit="2" aria-pressed="true" style="--c:var(--g)">Green</button>
+        <button type="button" data-bit="4" aria-pressed="false" style="--c:var(--b)">Blue</button>
+      </div>
+      <p class="answer" id="answer" aria-live="polite"></p>
+      <p class="note">A crystal lights only when the color arriving is exactly its own.</p>
+    </div>
+    <div class="stagebox"><div class="crystal" id="crystal"></div></div>
+  </div>
+</div></section>
+<section id="how"><div class="wrap"><h2>Easy to pick up</h2><p class="sub">Every control is a tap or a drag. The first stages show you the rest.</p><div class="grid3"><div class="card"><span class="num">1</span><h3>Place</h3><p>Tap an empty cell to place a piece from your inventory.</p></div><div class="card"><span class="num">2</span><h3>Rotate and move</h3><p>Tap a piece to rotate it. Drag it to move it, or drag it off the board to take it back.</p></div><div class="card"><span class="num">3</span><h3>Light every crystal</h3><p>Clear with no hint and few moves to earn all three stars.</p></div></div></div></section>
+<section id="devices"><div class="wrap"><h2>A new device keeps it fresh</h2><p class="sub">Devices arrive one at a time, each with a short guide the first time you meet it.</p><div class="pieces"><div class="card"><h3>Filter</h3><p>Lets only its own color through.</p></div><div class="card"><h3>Splitter</h3><p>Sends light both straight ahead and to the side.</p></div><div class="card"><h3>Prism</h3><p>Splits light: red turns left, green goes straight, blue turns right.</p></div><div class="card"><h3>Portal</h3><p>Light leaves the portal with the same number, going the same way.</p></div><div class="card"><h3>Inverter</h3><p>Changes light to its opposite color. Red becomes cyan.</p></div><div class="card"><h3>One-sided mirror</h3><p>The bright side reflects. The dotted side blocks.</p></div><div class="card"><h3>Combiner</h3><p>Merges incoming light and sends it where the arrow points.</p></div><div class="card"><h3>Switch door</h3><p>Blocks light until the crystal with the same number lights up.</p></div><div class="card"><h3>Forbidden crystal</h3><p>No light may touch it. Send the beam elsewhere.</p></div></div></div></section>
+<section id="screens"><div class="wrap"><h2>See it in play</h2><div class="gallery"><figure><img class="shot" src="images/play-mix-en.webp" width="540" height="1200" alt="Stage in progress with several beams" loading="lazy"><figcaption>Beams crossing the board</figcaption></figure><figure><img class="shot" src="images/play-yellow-en.webp" width="540" height="1200" alt="Stage in progress with a yellow beam" loading="lazy"><figcaption>Guiding yellow light to its crystal</figcaption></figure><figure><img class="shot" src="images/stage-map-en.webp" width="540" height="1200" alt="Stage map with numbered stages and stars" loading="lazy"><figcaption>120 stages to work through</figcaption></figure><figure><img class="shot" src="images/how-to-en.webp" width="540" height="1200" alt="How to play screen showing colors mixing" loading="lazy"><figcaption>Learn how light mixes</figcaption></figure></div></div></section>
+<section><div class="wrap"><h2>Made to be comfortable</h2><div class="grid3"><div class="card"><h3>Color-blind friendly options</h3><p>Color letters are on by default, and high-contrast lights widen the color spacing.</p></div><div class="card"><h3>Hints when you are stuck</h3><p>You start with 3 hints. Watch an optional video ad for one more when you run out.</p></div><div class="card"><h3>Ads, plainly</h3><p>Banners appear on the home and clear screens, and a full-screen ad after every 10th clear starting from the 20th. The play screen has no banner. No in-app purchases.</p></div></div></div></section>
+</main>
+<footer><div class="wrap">
+  <span>© 2026 J.Biglion · Developer: J.Biglion</span>
+  <span><a href="privacy-policy.html?lang=en">Privacy Policy</a> · Contact: <a href="mailto:jbiglion22@gmail.com">jbiglion22@gmail.com</a></span>
+</div></footer>
+<script>
+(function () {
+  var names = ["Turn on a light", "Red", "Green", "Yellow (R+G)", "Blue", "Magenta (R+B)", "Cyan (G+B)", "White (R+G+B)"];
+  var css = { 0: ['#17193F', '#5F6296'], 1: ['#FF4D6D'], 2: ['#3DDC97'], 4: ['#5B8CFF'], 3: ['#FFD93D'], 6: ['#4DE8F0'], 5: ['#F05BE0'], 7: ['#FFFFFF'] };
+  var buttons = document.querySelectorAll('.switches button');
+  var crystal = document.getElementById('crystal');
+  var answer = document.getElementById('answer');
+  function update() {
+    var mask = 0;
+    buttons.forEach(function (b) { if (b.getAttribute('aria-pressed') === 'true') mask |= +b.dataset.bit; });
+    var c = css[mask];
+    crystal.style.background = c[0];
+    crystal.style.borderColor = c[1] || '#fff';
+    crystal.style.boxShadow = mask ? '0 0 46px ' + c[0] : 'none';
+    answer.textContent = names[mask];
+  }
+  buttons.forEach(function (b) {
+    b.addEventListener('click', function () {
+      b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
+      update();
+    });
+  });
+  update();
+})();
+</script>
+</body>
+</html>
